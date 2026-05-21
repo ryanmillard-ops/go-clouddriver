@@ -22,12 +22,7 @@ jobs:
           go-version-file: go.mod
 
       - name: Get dependencies
-        run: |
-          go get -v -t -d ./...
-          if [ -f Gopkg.toml ]; then
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-          fi
+        run: go mod download
 
       - name: Verify dependencies
         run: go mod verify
@@ -36,7 +31,7 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: v1.58
+          version: v1.64
 
       - name: Build
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v cmd/clouddriver/clouddriver.go

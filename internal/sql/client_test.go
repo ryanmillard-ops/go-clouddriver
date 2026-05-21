@@ -198,7 +198,7 @@ var _ = Describe("Sql", func() {
 
 					// we make sure that all expectations were met
 					if err := mock.ExpectationsWereMet(); err != nil {
-						fmt.Errorf("there were unfulfilled expections: %s", err)
+						_ = fmt.Errorf("there were unfulfilled expections: %s", err)
 					}
 				}
 
