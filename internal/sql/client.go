@@ -594,7 +594,7 @@ func (c *client) ListKubernetesAccountsBySpinnakerApp(spinnakerApp string) ([]st
 		Group("account_name").
 		Find(&rs)
 
-	accounts := []string{}
+	accounts := make([]string, 0, len(rs))
 	for _, r := range rs {
 		accounts = append(accounts, r.AccountName)
 	}
@@ -611,7 +611,7 @@ func (c *client) ListReadGroupsByAccountName(accountName string) ([]string, erro
 		Group("read_group").
 		Find(&r)
 
-	groups := []string{}
+	groups := make([]string, 0, len(r))
 	for _, v := range r {
 		groups = append(groups, v.ReadGroup)
 	}
@@ -628,7 +628,7 @@ func (c *client) ListWriteGroupsByAccountName(accountName string) ([]string, err
 		Group("write_group").
 		Find(&w)
 
-	groups := []string{}
+	groups := make([]string, 0, len(w))
 	for _, v := range w {
 		groups = append(groups, v.WriteGroup)
 	}
