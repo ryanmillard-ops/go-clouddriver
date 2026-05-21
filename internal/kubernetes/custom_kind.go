@@ -102,8 +102,8 @@ func getCustomKindConfig(kind string) CustomKindConfig {
 	if configFile == nil {
 		once.Do(func() {
 			allConfigs := make(map[string]CustomKindConfig)
-			configBytes, err := os.ReadFile(customKindsConfigPath)
 
+			configBytes, err := os.ReadFile(customKindsConfigPath)
 			if err != nil {
 				clouddriver.Log(fmt.Errorf("error reading custom kinds config file at %s: %v",
 					customKindsConfigPath, err))

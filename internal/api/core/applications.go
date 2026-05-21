@@ -401,7 +401,7 @@ func (cc *Controller) ListLoadBalancers(c *gin.Context) {
 	// Make a map of resources to Pods they own.
 	instances := makeLoadBalancerInstanceMap(pods)
 	// Make a map of ReplicaSet/StatefulSet UIDs to Services that front them.
-	frontableServerGroups := []resource{}
+	frontableServerGroups := make([]resource, 0, len(replicaSets)+len(statefulSets))
 	frontableServerGroups = append(frontableServerGroups, replicaSets...)
 	frontableServerGroups = append(frontableServerGroups, statefulSets...)
 	loadBalancerServerGroups := makeLoadBalancerServerGroupsMap(frontableServerGroups, services, instances)
@@ -726,6 +726,7 @@ func (cc *Controller) ListClustersByName(c *gin.Context) {
 	if len(a) != 2 {
 		clouddriver.Error(c, http.StatusBadRequest,
 			fmt.Errorf("clusterName parameter must be in the format of 'kind name', got: %s", clusterName))
+
 		return
 	}
 
@@ -956,12 +957,12 @@ func (cc *Controller) ListServerGroups(c *gin.Context) {
 	// it owns.
 	serverGroupMap := makeServerGroupMap(pods)
 	// Make a map of ReplicaSet/StatefulSet UIDs to Services that front them.
-	frontableServerGroups := []resource{}
+	frontableServerGroups := make([]resource, 0, len(replicaSets)+len(statefulSets))
 	frontableServerGroups = append(frontableServerGroups, replicaSets...)
 	frontableServerGroups = append(frontableServerGroups, statefulSets...)
 	serverGroupLoadBalancers := makeServerGroupLoadBalancersMap(frontableServerGroups, services)
 	// Combine the resources into one server group slice.
-	serverGroups := []resource{}
+	serverGroups := make([]resource, 0, len(replicaSets)+len(daemonSets)+len(statefulSets))
 	serverGroups = append(serverGroups, replicaSets...)
 	serverGroups = append(serverGroups, daemonSets...)
 	serverGroups = append(serverGroups, statefulSets...)
@@ -1394,7 +1395,7 @@ func (cc *Controller) GetServerGroup(c *gin.Context) {
 
 	for _, v := range pods.Items {
 		p := kubernetes.NewPod(v.Object)
-		for _, ownerReference := range p.Object().ObjectMeta.OwnerReferences {
+		for _, ownerReference := range p.Object().OwnerReferences {
 			if ownerReference.UID == result.GetUID() {
 				instance := newPodInstance(p, application, account)
 				instance.Manifest = v.Object
@@ -1534,7 +1535,7 @@ func newPodInstance(p *kubernetes.Pod, application, account string) Instance {
 		state = stateDown
 	}
 
-	annotations := p.Object().ObjectMeta.Annotations
+	annotations := p.Object().Annotations
 	cluster := annotations[kubernetes.AnnotationSpinnakerMonikerCluster]
 	app := annotations[kubernetes.AnnotationSpinnakerMonikerApplication]
 
@@ -1545,9 +1546,9 @@ func newPodInstance(p *kubernetes.Pod, application, account string) Instance {
 	instance := Instance{
 		Account:          account,
 		AccountName:      account,
-		AvailabilityZone: p.Object().ObjectMeta.Namespace,
+		AvailabilityZone: p.Object().Namespace,
 		CloudProvider:    typeKubernetes,
-		CreatedTime:      p.Object().ObjectMeta.CreationTimestamp.Unix() * 1000,
+		CreatedTime:      p.Object().CreationTimestamp.Unix() * 1000,
 		Health: []InstanceHealth{
 			{
 				State: state,
@@ -1559,28 +1560,28 @@ func newPodInstance(p *kubernetes.Pod, application, account string) Instance {
 			},
 		},
 		HealthState:       state,
-		HumanReadableName: fmt.Sprintf("%s %s", "pod", p.Object().ObjectMeta.Name),
-		ID:                string(p.Object().ObjectMeta.UID),
+		HumanReadableName: fmt.Sprintf("%s %s", "pod", p.Object().Name),
+		ID:                string(p.Object().UID),
 		Key: Key{
 			Account:        account,
 			Group:          "pod",
 			KubernetesKind: "pod",
-			Name:           p.Object().ObjectMeta.Name,
-			Namespace:      p.Object().ObjectMeta.Namespace,
+			Name:           p.Object().Name,
+			Namespace:      p.Object().Namespace,
 			Provider:       typeKubernetes,
 		},
 		Kind:   "pod",
-		Labels: p.Object().ObjectMeta.Labels,
+		Labels: p.Object().Labels,
 		Moniker: Moniker{
 			App:     app,
 			Cluster: cluster,
 		},
-		Name:         fmt.Sprintf("%s %s", "pod", p.Object().ObjectMeta.Name),
+		Name:         fmt.Sprintf("%s %s", "pod", p.Object().Name),
 		ProviderType: typeKubernetes,
-		Region:       p.Object().ObjectMeta.Namespace,
+		Region:       p.Object().Namespace,
 		Type:         typeKubernetes,
-		UID:          string(p.Object().ObjectMeta.UID),
-		Zone:         p.Object().ObjectMeta.Namespace,
+		UID:          string(p.Object().UID),
+		Zone:         p.Object().Namespace,
 	}
 
 	return instance

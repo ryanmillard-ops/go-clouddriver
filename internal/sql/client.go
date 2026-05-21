@@ -181,12 +181,12 @@ func (c *client) DeleteKubernetesResourcesByAccountName(account string) error {
 // GetKubernetesProvider reads the provider from the DB.
 func (c *client) GetKubernetesProvider(name string) (kubernetes.Provider, error) {
 	p := kubernetes.Provider{}
+
 	rows, err := c.db.Table("kubernetes_providers a").
 		Select("a.name, a.host, a.ca_data, a.bearer_token, a.token_provider, a.namespace as legacy_namespace, b.namespace").
 		Joins("LEFT JOIN "+kubernetes.ProviderNamespaces{}.TableName()+" b ON a.name = b.account_name").
 		Where("a.name = ?", name).
 		Rows()
-
 	if err != nil {
 		return p, err
 	}
@@ -342,6 +342,7 @@ func (c *client) GetKubernetesProviderAndPermissions(name string) (kubernetes.Pr
 // ingress, service, and daemonSet.
 func (c *client) ListKubernetesClustersByApplication(spinnakerApp string) ([]kubernetes.Resource, error) {
 	var rs []kubernetes.Resource
+
 	db := c.db.Select("account_name, cluster").
 		Where("spinnaker_app = ? AND UPPER(kind) in ('DEPLOYMENT', 'STATEFULSET', 'REPLICASET', 'INGRESS', 'SERVICE', 'DAEMONSET')",
 			spinnakerApp).
@@ -364,6 +365,7 @@ func (c *client) ListKubernetesClustersByFields(fields ...string) ([]kubernetes.
 	}
 
 	var rs []kubernetes.Resource
+
 	db := c.db.Select(list).Where("UPPER(kind) in ('DEPLOYMENT', 'STATEFULSET', 'REPLICASET', 'INGRESS', 'SERVICE', 'DAEMONSET')").Group(list).Find(&rs)
 
 	return rs, db.Error
@@ -558,6 +560,7 @@ func contains(s []string, e string) bool {
 // by task ID from the DB.
 func (c *client) ListKubernetesResourcesByTaskID(taskID string) ([]kubernetes.Resource, error) {
 	var rs []kubernetes.Resource
+
 	db := c.db.Select("account_name, api_group, kind, name, artifact_name, namespace, resource, task_type, version").
 		Where("task_id = ?", taskID).Find(&rs)
 
@@ -580,6 +583,7 @@ func (c *client) ListKubernetesResourcesByFields(fields ...string) ([]kubernetes
 	}
 
 	var rs []kubernetes.Resource
+
 	db := c.db.Select(list).Group(list).Find(&rs)
 
 	return rs, db.Error
@@ -589,12 +593,13 @@ func (c *client) ListKubernetesResourcesByFields(fields ...string) ([]kubernetes
 // for a Spinnaker application from the DB.
 func (c *client) ListKubernetesAccountsBySpinnakerApp(spinnakerApp string) ([]string, error) {
 	var rs []kubernetes.Resource
+
 	db := c.db.Select("account_name").
 		Where("spinnaker_app = ?", spinnakerApp).
 		Group("account_name").
 		Find(&rs)
 
-	accounts := []string{}
+	accounts := make([]string, 0, len(rs))
 	for _, r := range rs {
 		accounts = append(accounts, r.AccountName)
 	}
@@ -611,7 +616,7 @@ func (c *client) ListReadGroupsByAccountName(accountName string) ([]string, erro
 		Group("read_group").
 		Find(&r)
 
-	groups := []string{}
+	groups := make([]string, 0, len(r))
 	for _, v := range r {
 		groups = append(groups, v.ReadGroup)
 	}
@@ -628,7 +633,7 @@ func (c *client) ListWriteGroupsByAccountName(accountName string) ([]string, err
 		Group("write_group").
 		Find(&w)
 
-	groups := []string{}
+	groups := make([]string, 0, len(w))
 	for _, v := range w {
 		groups = append(groups, v.WriteGroup)
 	}

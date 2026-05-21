@@ -57,7 +57,7 @@ func (rs *ReplicaSet) Status() manifest.Status {
 		return s
 	}
 
-	if r.ObjectMeta.Generation != r.Status.ObservedGeneration {
+	if r.Generation != r.Status.ObservedGeneration {
 		s.Stable.State = false
 		s.Stable.Message = "Waiting for replicaset spec update to be observed"
 

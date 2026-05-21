@@ -413,8 +413,8 @@ func attachLoadBalancer(client kubernetes.Client, loadBalancer string,
 	target *unstructured.Unstructured, manifests []unstructured.Unstructured) error {
 	a := strings.Split(loadBalancer, " ")
 	if len(a) != 2 {
-		return fmt.Errorf("Failed to attach load balancer '%s'. "+
-			"Load balancers must be specified in the form '{kind} {name}', e.g. 'service my-service'.", loadBalancer)
+		return fmt.Errorf("failed to attach load balancer '%s': "+
+			"load balancers must be specified in the form '{kind} {name}', e.g. 'service my-service'", loadBalancer)
 	}
 
 	kind := a[0]
@@ -422,7 +422,7 @@ func attachLoadBalancer(client kubernetes.Client, loadBalancer string,
 	// For now, limit the kind of load balancer available to attach to Services.
 	if !strings.EqualFold(kind, "service") {
 		// https://github.com/spinnaker/clouddriver/blob/8c377ef6be07278cd8a54448980f2b2065069a34/clouddriver-kubernetes/src/main/java/com/netflix/spinnaker/clouddriver/kubernetes/op/handler/CanLoadBalance.java#L39
-		return fmt.Errorf("No support for load balancing via %s exists in Spinnaker.", kind)
+		return fmt.Errorf("no support for load balancing via %s exists in Spinnaker", kind)
 	}
 
 	var (
@@ -450,7 +450,7 @@ func attachLoadBalancer(client kubernetes.Client, loadBalancer string,
 		if err != nil {
 			if errors.IsNotFound(err) {
 				// https://github.com/spinnaker/clouddriver/blob/62325f922533d9e96b35d88698959def4ad517b5/clouddriver-kubernetes/src/main/java/com/netflix/spinnaker/clouddriver/kubernetes/op/manifest/KubernetesDeployManifestOperation.java#L329
-				return fmt.Errorf("Load balancer %s %s does not exist", kind, name)
+				return fmt.Errorf("load balancer %s %s does not exist", kind, name)
 			}
 
 			return fmt.Errorf("error getting service %s: %v", name, err)
@@ -487,11 +487,11 @@ func attach(lb unstructured.Unstructured, target *unstructured.Unstructured) err
 
 	selector, found, _ := unstructured.NestedStringMap(lb.Object, "spec", "selector")
 	if !found || len(selector) == 0 {
-		return fmt.Errorf("Service must have a non-empty selector in order to be attached to a workload")
+		return fmt.Errorf("service must have a non-empty selector in order to be attached to a workload")
 	}
 
 	if !disjoint(labels, selector) {
-		return fmt.Errorf("Service selector must have no label keys in common with target workload")
+		return fmt.Errorf("service selector must have no label keys in common with target workload")
 	}
 
 	for k, v := range selector {

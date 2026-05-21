@@ -27,7 +27,7 @@ func (d *Deployment) Object() *v1.Deployment {
 func (d *Deployment) Status() manifest.Status {
 	s := manifest.DefaultStatus
 
-	if d.d.ObjectMeta.Generation != d.d.Status.ObservedGeneration {
+	if d.d.Generation != d.d.Status.ObservedGeneration {
 		s.Stable.State = false
 		s.Stable.Message = "Waiting for status generation to match updated object generation"
 

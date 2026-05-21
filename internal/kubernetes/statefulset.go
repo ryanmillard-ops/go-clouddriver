@@ -38,7 +38,7 @@ func (ss *StatefulSet) Status() manifest.Status {
 		return s
 	}
 
-	if x.ObjectMeta.Generation != x.Status.ObservedGeneration {
+	if x.Generation != x.Status.ObservedGeneration {
 		s.Stable.State = false
 		s.Stable.Message = "Waiting for status generation to match updated object generation"
 

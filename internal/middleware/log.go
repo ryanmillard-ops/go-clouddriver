@@ -41,15 +41,15 @@ func LogRequest() gin.HandlerFunc {
 
 			buffer.WriteString(bold("REQUEST: ["+time.Now().In(time.UTC).Format(time.RFC3339)) + bold("]"))
 			buffer.WriteByte('\n')
-			buffer.WriteString(fmt.Sprintf("%s %s %s", clone.Method, clone.URL, clone.Proto))
+			fmt.Fprintf(buffer, "%s %s %s", clone.Method, clone.URL, clone.Proto)
 			buffer.WriteByte('\n')
-			buffer.WriteString(fmt.Sprintf("Host: %s", clone.Host))
+			fmt.Fprintf(buffer, "Host: %s", clone.Host)
 			buffer.WriteByte('\n')
-			buffer.WriteString(fmt.Sprintf("Accept: %s", clone.Header.Get("Accept")))
+			fmt.Fprintf(buffer, "Accept: %s", clone.Header.Get("Accept"))
 			buffer.WriteByte('\n')
-			buffer.WriteString(fmt.Sprintf("User-Agent: %s", clone.Header.Get("User-Agent")))
+			fmt.Fprintf(buffer, "User-Agent: %s", clone.Header.Get("User-Agent"))
 			buffer.WriteByte('\n')
-			buffer.WriteString(fmt.Sprintf("Headers: %s", clone.Header))
+			fmt.Fprintf(buffer, "Headers: %s", clone.Header)
 			buffer.WriteByte('\n')
 
 			if len(b) > 0 {

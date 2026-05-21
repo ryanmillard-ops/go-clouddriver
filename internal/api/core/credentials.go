@@ -187,6 +187,7 @@ func (cc *Controller) listNamespaces(provider kubernetes.Provider,
 	if err != nil {
 		clouddriver.Log(fmt.Errorf("error listing namespaces (provider name: %s, provider host: %s, token provider: %s): %v",
 			provider.Name, provider.Host, provider.TokenProvider, err))
+
 		return
 	}
 

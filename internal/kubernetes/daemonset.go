@@ -38,7 +38,7 @@ func (ds *DaemonSet) Status() manifest.Status {
 		return s
 	}
 
-	if ds.ds.ObjectMeta.Generation != ds.ds.Status.ObservedGeneration {
+	if ds.ds.Generation != ds.ds.Status.ObservedGeneration {
 		s.Stable.State = false
 		s.Stable.Message = "Waiting for status generation to match updated object generation"
 

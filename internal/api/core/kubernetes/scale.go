@@ -75,6 +75,7 @@ func (cc *Controller) Scale(c *gin.Context, sm ScaleManifestRequest) {
 	default:
 		clouddriver.Error(c, http.StatusBadRequest,
 			fmt.Errorf("scaling kind %s not currently supported", kind))
+
 		return
 	}
 

@@ -241,6 +241,7 @@ func (cc *Controller) GetManifestByCriteria(c *gin.Context) {
 		if len(items) < 2 {
 			clouddriver.Error(c, http.StatusBadRequest,
 				errors.New("requested target \"Second Newest\" for cluster "+cluster+", but only one resource was found"))
+
 			return
 		}
 
@@ -248,6 +249,7 @@ func (cc *Controller) GetManifestByCriteria(c *gin.Context) {
 	default:
 		clouddriver.Error(c, http.StatusBadRequest,
 			fmt.Errorf("unknown criteria: %s", criteria))
+
 		return
 	}
 

@@ -110,6 +110,7 @@ func (d *cachedDiscoveryClient) ServerResourcesForGroupVersion(groupVersion stri
 }
 
 // ServerResources returns the supported resources for all groups and versions.
+//
 // Deprecated: use ServerGroupsAndResources instead.
 func (d *cachedDiscoveryClient) ServerResources() ([]*metav1.APIResourceList, error) {
 	_, rs, err := discovery.ServerGroupsAndResources(d)
@@ -187,6 +188,7 @@ func (d *cachedDiscoveryClient) getCachedFile(filename string) ([]byte, error) {
 
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
+
 	d.fresh = d.fresh && ourFile
 
 	return cachedBytes, nil

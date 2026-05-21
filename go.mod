@@ -1,8 +1,8 @@
 module github.com/homedepot/go-clouddriver
 
-go 1.22.0
+go 1.26.0
 
-toolchain go1.22.3
+toolchain go1.26.3
 
 require (
 	cloud.google.com/go/storage v1.41.0

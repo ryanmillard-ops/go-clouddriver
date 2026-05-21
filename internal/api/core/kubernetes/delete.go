@@ -9,10 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/homedepot/go-clouddriver/internal"
 	"github.com/homedepot/go-clouddriver/internal/kubernetes"
-	kube "github.com/homedepot/go-clouddriver/internal/kubernetes"
 	clouddriver "github.com/homedepot/go-clouddriver/pkg"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 )
 
@@ -43,10 +41,10 @@ func (cc *Controller) Delete(c *gin.Context, dm DeleteManifestRequest) {
 	// Default to use the Delete Propagation Foreground as our propagation
 	// policy, in case neither are passed in, then check if either are
 	// passed and send the propagation policy accordingly.
-	propagationPolicy := v1.DeletePropagationForeground
+	propagationPolicy := metav1.DeletePropagationForeground
 	if (dm.Options.Cascading != nil && !*dm.Options.Cascading) ||
 		(dm.Options.OrphanDependants != nil && *dm.Options.OrphanDependants) {
-		propagationPolicy = v1.DeletePropagationOrphan
+		propagationPolicy = metav1.DeletePropagationOrphan
 	}
 
 	do.PropagationPolicy = &propagationPolicy
@@ -123,7 +121,7 @@ func (cc *Controller) Delete(c *gin.Context, dm DeleteManifestRequest) {
 		ls := labels.NewSelector()
 		// The set of label selectors will be used across all Kinds.
 		for _, selector := range dm.LabelSelectors.Selectors {
-			req, err := kube.NewRequirement(selector.Kind, selector.Key, selector.Values)
+			req, err := kubernetes.NewRequirement(selector.Kind, selector.Key, selector.Values)
 			if err != nil {
 				clouddriver.Error(c, http.StatusInternalServerError, err)
 				return
@@ -218,6 +216,7 @@ func (cc *Controller) Delete(c *gin.Context, dm DeleteManifestRequest) {
 	default:
 		clouddriver.Error(c, http.StatusNotImplemented,
 			fmt.Errorf("requested to delete manifest %s using mode %s which is not implemented", dm.ManifestName, mode))
+
 		return
 	}
 }

@@ -764,8 +764,8 @@ var _ = Describe("Deploy", func() {
 
 			It("returns an error", func() {
 				Expect(c.Writer.Status()).To(Equal(http.StatusBadRequest))
-				Expect(c.Errors.Last().Error()).To(Equal("Failed to attach load balancer 'test-ingress'. " +
-					"Load balancers must be specified in the form '{kind} {name}', e.g. 'service my-service'."))
+				Expect(c.Errors.Last().Error()).To(Equal("failed to attach load balancer 'test-ingress': " +
+					"load balancers must be specified in the form '{kind} {name}', e.g. 'service my-service'"))
 			})
 		})
 
@@ -790,7 +790,7 @@ var _ = Describe("Deploy", func() {
 
 			It("returns an error", func() {
 				Expect(c.Writer.Status()).To(Equal(http.StatusBadRequest))
-				Expect(c.Errors.Last().Error()).To(Equal("No support for load balancing via ingress exists in Spinnaker."))
+				Expect(c.Errors.Last().Error()).To(Equal("no support for load balancing via ingress exists in Spinnaker"))
 			})
 		})
 
@@ -900,7 +900,7 @@ var _ = Describe("Deploy", func() {
 
 			It("errors", func() {
 				Expect(c.Writer.Status()).To(Equal(http.StatusBadRequest))
-				Expect(c.Errors.Last().Error()).To(Equal("Load balancer service test-service does not exist"))
+				Expect(c.Errors.Last().Error()).To(Equal("load balancer service test-service does not exist"))
 			})
 		})
 
@@ -935,7 +935,7 @@ var _ = Describe("Deploy", func() {
 
 			It("errors", func() {
 				Expect(c.Writer.Status()).To(Equal(http.StatusBadRequest))
-				Expect(c.Errors.Last().Error()).To(Equal("Service must have a non-empty selector in order to be attached to a workload"))
+				Expect(c.Errors.Last().Error()).To(Equal("service must have a non-empty selector in order to be attached to a workload"))
 			})
 		})
 
@@ -962,7 +962,7 @@ var _ = Describe("Deploy", func() {
 
 			It("errors", func() {
 				Expect(c.Writer.Status()).To(Equal(http.StatusBadRequest))
-				Expect(c.Errors.Last().Error()).To(Equal("Service selector must have no label keys in common with target workload"))
+				Expect(c.Errors.Last().Error()).To(Equal("service selector must have no label keys in common with target workload"))
 			})
 		})
 

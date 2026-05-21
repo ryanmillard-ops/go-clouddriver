@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/homedepot/go-clouddriver/internal/kubernetes"
-	kube "github.com/homedepot/go-clouddriver/internal/kubernetes"
 	clouddriver "github.com/homedepot/go-clouddriver/pkg"
 	"k8s.io/apimachinery/pkg/util/rand"
 )
@@ -22,7 +21,7 @@ func (cc *Controller) RunJob(c *gin.Context, rj RunJobRequest) {
 		return
 	}
 
-	u, err := kube.ToUnstructured(rj.Manifest)
+	u, err := kubernetes.ToUnstructured(rj.Manifest)
 	if err != nil {
 		clouddriver.Error(c, http.StatusInternalServerError, err)
 		return
@@ -43,13 +42,13 @@ func (cc *Controller) RunJob(c *gin.Context, rj RunJobRequest) {
 		return
 	}
 
-	err = kube.AddSpinnakerAnnotations(&u, rj.Application)
+	err = kubernetes.AddSpinnakerAnnotations(&u, rj.Application)
 	if err != nil {
 		clouddriver.Error(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	err = kube.AddSpinnakerLabels(&u, rj.Application)
+	err = kubernetes.AddSpinnakerLabels(&u, rj.Application)
 	if err != nil {
 		clouddriver.Error(c, http.StatusInternalServerError, err)
 		return

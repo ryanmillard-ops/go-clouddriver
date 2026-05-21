@@ -11,7 +11,6 @@ import (
 	"github.com/homedepot/go-clouddriver/internal/kubernetes"
 	clouddriver "github.com/homedepot/go-clouddriver/pkg"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
@@ -82,7 +81,7 @@ func (cc *Controller) CleanupArtifacts(c *gin.Context, ca CleanupArtifactsReques
 				artifactsToDelete := artifacts[0 : len(artifacts)-maxVersionHistory]
 				for _, a := range artifactsToDelete {
 					// Delete the resource and any dependants in the foreground.
-					pp := v1.DeletePropagationForeground
+					pp := metav1.DeletePropagationForeground
 					do := metav1.DeleteOptions{
 						PropagationPolicy: &pp,
 					}

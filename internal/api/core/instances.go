@@ -196,6 +196,7 @@ func (cc *Controller) GetInstanceConsole(c *gin.Context) {
 	if qProvider != "kubernetes" {
 		clouddriver.Error(c, http.StatusNotImplemented, fmt.Errorf("provider %s console not implemented",
 			qProvider))
+
 		return
 	}
 
@@ -209,6 +210,7 @@ func (cc *Controller) GetInstanceConsole(c *gin.Context) {
 	if !strings.EqualFold(kind, "pod") {
 		clouddriver.Error(c, http.StatusNotImplemented, fmt.Errorf("kind %s console not implemented",
 			kind))
+
 		return
 	}
 	// Grab the Kubernetes provider with a deefault timeout.
@@ -229,7 +231,7 @@ func (cc *Controller) GetInstanceConsole(c *gin.Context) {
 	o := p.Object()
 	// Combine the containers and init containers into
 	// one object.
-	containers := []v1.Container{}
+	containers := make([]v1.Container, 0, len(o.Spec.Containers)+len(o.Spec.InitContainers))
 	containers = append(containers, o.Spec.Containers...)
 	containers = append(containers, o.Spec.InitContainers...)
 	// Declare a wait group for all the concurrent calls

@@ -192,8 +192,8 @@ func (cc *Controller) Rollback(c *gin.Context, ur UndoRolloutManifestRequest) {
 func SetFromReplicaSetTemplate(deployment *apps.Deployment, template v1.PodTemplateSpec) *apps.Deployment {
 	deployment.Spec.Template.ObjectMeta = template.ObjectMeta
 	deployment.Spec.Template.Spec = template.Spec
-	deployment.Spec.Template.ObjectMeta.Labels = CloneAndRemoveLabel(
-		deployment.Spec.Template.ObjectMeta.Labels,
+	deployment.Spec.Template.Labels = CloneAndRemoveLabel(
+		deployment.Spec.Template.Labels,
 		apps.DefaultDeploymentUniqueLabelKey)
 
 	return deployment

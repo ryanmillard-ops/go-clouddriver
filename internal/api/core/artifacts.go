@@ -141,7 +141,7 @@ func (cc *Controller) GetArtifact(c *gin.Context) {
 		// Parse filename
 		matches := matchGcsObjectNameRegexp.FindStringSubmatch(a.Reference)
 
-		if matches == nil || len(matches) < 2 {
+		if len(matches) < 2 {
 			clouddriver.Error(c, http.StatusBadRequest, fmt.Errorf("gcs/object references must be of the format gs://<bucket>/<file-path>[#generation], got: %s", a.Reference))
 			return
 		}
@@ -189,6 +189,7 @@ func (cc *Controller) GetArtifact(c *gin.Context) {
 		if !strings.HasPrefix(a.Reference, gc.BaseURL.String()) {
 			clouddriver.Error(c, http.StatusBadRequest, fmt.Errorf("content URL %s should have base URL %s",
 				a.Reference, gc.BaseURL.String()))
+
 			return
 		}
 
@@ -295,6 +296,7 @@ func (cc *Controller) GetArtifact(c *gin.Context) {
 
 		// tar > gzip > buf
 		var buf bytes.Buffer
+
 		zr := gzip.NewWriter(&buf)
 		tw := tar.NewWriter(zr)
 

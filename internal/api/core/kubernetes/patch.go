@@ -94,6 +94,7 @@ func (cc *Controller) Patch(c *gin.Context, pm PatchManifestRequest) {
 	default:
 		clouddriver.Error(c, http.StatusBadRequest,
 			fmt.Errorf("invalid merge strategy %s", pm.Options.MergeStrategy))
+
 		return
 	}
 
